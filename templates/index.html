@@ -43,7 +43,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Show</a>
+          <a class="navbar-brand" href="#">人脸识别系统</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
@@ -63,7 +63,7 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">人脸识别<span class="sr-only">(current)</span></a></li>
+            <li class="active"><a href="#">数据集人脸识别<span class="sr-only">(current)</span></a></li>
             <li><a href="#">模型说明</a></li>
             <!--<li><a href="#">Classfication Cifar10</a></li>-->
             <li><a href="#"></a></li>
@@ -82,26 +82,29 @@
           <!--</ul>-->
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">Origin Image</h1>
+          <h1 class="page-header">原始图像</h1>
 
           <div class="row placeholders">
             {% for face in origin_face %}
-              <div class="col-xs-6 col-sm-3 placeholder">
-                <img src={{face.data}} width="200" height="200" class="img-responsive" alt="加载失败">
+              <div class="col-xs-6 col-sm-3 placeholder" align="left">
+                <img src={{face.data}}  height="200" width="200" class="img-responsive" alt="加载失败">
                 <p></p>
                 <h4>{{face.name}}</h4>
                 <span class="text-muted">{{face.label}}</span>
-                <div class="btn-group btn-group-sm col-xs-1">
-                  <form class="btn-default" action='/' method="POST">
-                    <input type="hidden" name="id" value="{{face.id}}">
-                    <input type="hidden" name="method" value="dlib">
-                    <input type="submit" value="Dlib识别">
-                  </form>
-                  <form class="btn-default" action='/' method="POST">
-                    <input type="hidden" name="id" value="{{face.id}}">
-                    <input type="hidden" name="method" value="face-net">
-                    <input type="submit" value="MyModel">
-                  </form>
+                <div class="col-sm-3 col-sm-offset-1 col-md-1 col-md-offset-1 main">
+                  <div class="row placeholder">
+                          <form class="btn-default" action='/' method="POST">
+                              <input type="hidden" name="id" value="{{face.id}}">
+                              <input type="hidden" name="method" value="dlib">
+                              <input type="submit" value="Dlib识别">
+                          </form>
+                          <form class="btn-default" action='/' method="POST">
+                              <input type="hidden" name="id" value="{{face.id}}">
+                              <input type="hidden" name="method" value="face-net">
+                              <input type="submit" value="MyModel">
+                          </form>
+
+                  </div>
                 </div>
               </div>
             {% endfor %}
@@ -125,23 +128,49 @@
               <!--<span class="text-muted">Something else</span>-->
             <!--</div>-->
           </div>
-          <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <div class="row placeholders">
-            <a class="btn btn-primary" href="/?is_flush=1&dataset=lfw">下一组LFW</a>
+          <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" >
+            <div class="row placeholder_btn" >
+              <a class="btn btn-primary" href="/?is_flush=1&dataset=lfw">下一组LFW</a>
               <a class="btn btn-primary" href="/?is_flush=1&dataset=vgg">下一组VGG</a>
             </div>
           </div>
 
-          <h2 class="sub-header">Recognition Result</h2>
-          <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-            <div class="row placeholders">
-              <div class="col-xs-6 col-sm-3 placeholder">
-                {% if rec_face%}
-                <img src={{rec_face.data}} width="200" height="200" class="img-responsive" alt="加载失败">
-                <h4>{{rec_face.name}}</h4>
-                {% endif %}
-              </div>
+        <br>
+            {% if rec_face%}
+          <h1 class="sub-header">识别结果</h1>
+          <div class="row placeholders">
+            <div class="col-xs-6 col-sm-3 placeholder">
+                  <img src={{rec_face.data}} width="200" height="200" class="img-responsive" alt="加载失败">
+                  <h4>{{rec_face.name}}</h4>
             </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+                <p>检测结果详细信息</p>
+                <table class="table .table-bordered">
+
+                    {% for key, val in rec_face.rec_info.items() %}
+                    <tr >
+                        <td class=".active ">{{ key }}</td>
+                        <td class=".active info">{{ val }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+          </div>
+            {% endif %}
+
+          <h1 class="sub-header">模型说明</h1>
+          <div class="row placeholder">
+              <p>
+                  "Dlib识别"是调用的Dlib库的人脸识别方法, MyModel这是我自己训练的人脸检测模型
+              <h4> 模型详细: <a href="https://github.com/zc-play/face-model">GitHub</a></h4>
+              <h4> 模型部署: <a href="https://github.com/zc-play/rpc-server">GitHub</a></h4>
+              </p>
+              <br>
+              <p>因为我自己没有GPU服务器, 就在阿里云买的按量收费的GPU实例，
+                  所以训练数据比较少，总共只有2622个人，总图像大概有七八万;  训练的Epochs也比较少，模型的准确度不那么高。</p>
+              <p>正脸检测Bundling box的概率比侧脸相对大一些 </p>
+              <br>
+              <p>最后就是, 前端UI有点丑的。 囧。。</p>
           </div>
         </div>
       </div>

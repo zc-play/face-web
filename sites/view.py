@@ -15,14 +15,23 @@ def allowed_file(filename):
 
 
 origin_face = []
+dataset = 'vgg'
 
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_image():
-    global origin_face
+    global origin_face, dataset
 
     # Check if a valid image file was uploaded
     rec_face = None
+    # 选未训练的4个
+    is_flush = request.args.get('is_flush')
+    data_set = request.args.get('dataset')
+    if data_set:
+        dataset = data_set
+
+    print('.......................{}'.format(dataset))
+
     if request.method == 'POST':
         face_id = request.form.get('id')
         method = request.form.get('method')
@@ -30,21 +39,18 @@ def upload_image():
         if face_id:
             rec_face = Face.query.filter_by(id=face_id).first()
             try:
-                rec_face.get_rec_data(method=method)
+                rec_face.get_rec_data(method=method, dataset=dataset)
             except:
                 pass
 
-    # 选未训练的4个
-    is_flush = request.args.get('is_flush')
-    dataset = request.args.get('dataset')
-    if dataset is None:
-        dataset = 'vgg'
     print('is_flush: ', is_flush)
     if is_flush == '1':
         origin_face = []
 
     if not origin_face:
-        faces = db.session.query(Face).filter(Face.is_train == 0, dataset=dataset).order_by(func.rand()).limit(4).all()
+        faces = db.session.query(Face).\
+            filter(Face.is_train == 0, Face.dataset == dataset).\
+            order_by(func.rand()).limit(4).all()
         for face in faces:
             face.get_org_data()
             origin_face.append(face)

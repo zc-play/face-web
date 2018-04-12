@@ -1,4 +1,5 @@
 # coding: utf-8
+import os
 import base64
 import json
 
@@ -28,13 +29,16 @@ class Face(db.Model):
         db.session.commit()
 
     def get_org_data(self):
+        if not os.path.exists(self.path):
+            self.data = '该图像缺失'
+            return
         with open(self.path, 'rb') as f:
             img = f.read()
         img_b64 = base64.b64encode(img)
-        self.data = 'data:image/gif;base64,%s' % str(img_b64,'utf-8')
+        self.data = 'data:image/gif;base64,%s' % str(img_b64, 'utf-8')
 
-    def get_rec_data(self, method):
-        res = face_rec_rpc(self.id, method)
+    def get_rec_data(self, method, dataset='lfw'):
+        res = face_rec_rpc(self.id, method, dataset)
         self.data = res.get('stream')
         self.rec_info = json.loads(res.get('rec_info'))
         print(self.rec_info)

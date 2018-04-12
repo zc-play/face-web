@@ -13,7 +13,7 @@ channel = grpc.insecure_channel('localhost:50051')
 stub = FaceRecognitionStub(channel)
 
 
-def face_rec_rpc(face_id, method='dlib', is_return=True, is_save=False, save_path='test.png'):
+def face_rec_rpc(face_id, method='dlib', dataset='lfw', is_return=True, is_save=False, save_path='test.png'):
     """
     rpc client, send a request of face recognition to rpc server
     :param face_id: str,
@@ -23,7 +23,7 @@ def face_rec_rpc(face_id, method='dlib', is_return=True, is_save=False, save_pat
     :param save_path: save path
     :return:
     """
-    req_data = json.dumps(dict(face_id=face_id, method=method))
+    req_data = json.dumps(dict(face_id=face_id, method=method, dataset=dataset))
     response = stub.face_rec_str(MyStr(name=req_data))
     if is_return:
         return dict(stream='data:image/gif;base64,%s' % response.stream, rec_info=response.name)

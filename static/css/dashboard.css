@@ -103,3 +103,8 @@ body {
   display: inline-block;
   /*border-radius: 50%;*/
 }
+
+.placeholder_btn {
+  margin-bottom: 20px;
+  text-align: left;
+}
