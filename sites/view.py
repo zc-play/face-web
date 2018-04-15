@@ -19,7 +19,7 @@ dataset = 'vgg'
 
 
 @app.route('/', methods=['GET', 'POST'])
-def upload_image():
+def home():
     global origin_face, dataset
 
     # Check if a valid image file was uploaded
@@ -56,3 +56,9 @@ def upload_image():
             origin_face.append(face)
 
     return render_template('index.html', origin_face=origin_face, rec_face=rec_face)
+
+
+@app.route('/desc')
+def sys_desc():
+    return render_template('desc.html')
+
