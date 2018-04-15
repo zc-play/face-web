@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../static/bootstrap/docs/favicon.ico">
+
+    <title>学习展示</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="/static/bootstrap/docs/assets/css/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/static/css/dashboard.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]>
+    <script src="/static/bootstrap/docs/assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="/static/bootstrap/docs/assets/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">人脸识别系统</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Settings</a></li>
+            <li><a href="#">Profile</a></li>
+            <li><a href="#">Help</a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="Search...">
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li><a href="/">算法展示<span class="sr-only">(current)</span></a></li>
+            <li class="active"><a href="/desc">建模详情</a></li>
+            <!--<li><a href="#">Classfication Cifar10</a></li>-->
+            <li><a href="#"></a></li>
+          </ul>
+          <!--<ul class="nav nav-sidebar">-->
+            <!--<li><a href="">Nav item</a></li>-->
+            <!--<li><a href="">Nav item again</a></li>-->
+            <!--<li><a href="">One more nav</a></li>-->
+            <!--<li><a href="">Another nav item</a></li>-->
+            <!--<li><a href="">More navigation</a></li>-->
+          <!--</ul>-->
+          <!--<ul class="nav nav-sidebar">-->
+            <!--<li><a href="">Nav item again</a></li>-->
+            <!--<li><a href="">One more nav</a></li>-->
+            <!--<li><a href="">Another nav item</a></li>-->
+          <!--</ul>-->
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+          <h2 id="toc_0">人脸识别系统</h2>
+
+          <p>项目中的Faster-RCNN检测算法， 参考的<a href="https://github.com/yhenon/keras-frcnn" title="keras-frcnn">keras-frcnn</a></p>
+
+          <p>该项目是主要用于训练，其部署机器api接口，移步<a href="https://github.com/zc-play/rpc-server" title="rpc-server">这里</a></p>
+
+          <p>该系统主要包含三个模型：</p>
+
+          <ol>
+            <li><p>人脸分类 (face_classifier）</p>
+
+              <p>人脸分类模型预期是判别图像是否是人脸，其主要作用是验证简化版的VGG模型能否准确对人脸进行分类，其模型架构将作为人脸定位模型的Classfier。</p>
+
+              <p>简化改进：</p>
+
+              <ol>
+                <li>在卷积层中，保留了前4个Block，并每次卷积与激活函数之间加入了BatchNormalization。去掉了第5个Block， 这里把前4个Block称为BaseLayer;</li>
+                <li>全连接层中，减少了两个全连接层的数量。</li>
+              </ol>
+
+              <p>训练数据：</p>
+
+              <ol>
+                <li>正样本：按照VGG-Face-Dataset中annotations中的bundling box标记位置，截取人脸。</li>
+                <li>负样本：bundling box 上下左右的随机图像。
+                  样本数：训练集：145177， 开发集：12249， 测试集：12249</li>
+              </ol>
+
+              <p>输入图像：[64, 64]</p>
+
+              <p>测试集测试结果：</p>
+
+              <div><pre><code class="language-none">   num_pos: 5000
+   num_neg: 7243
+   loss = 0.006139507154439343
+   accuracy = 0.99796875</code></pre></div></li>
+            <li><p>人脸定位 Faster-RCNN（face_detect)</p>
+
+              <p>人脸检测模型是在Faster RCNN的VGG16版本基础上进行的简化修改。其BaseLayer复用人脸分类的BaseLayer，其classfier结构与人脸分类模型一致， rpn则结构不变。</p>
+
+              <p>训练数据集：对VGG-Face-Dataset中annotations中的图像进行过滤。</p>
+
+              <ol>
+                <li>Vgg Face Dataset 数据集中一张图像对应一个人脸标记，在frcnn学习中，会把标记之外的，划分为负样本(bg); 因此得去掉存在多个人脸的图像</li>
+                <li>部分url失效，或者url下载到的图像并非原有图像，或者存在标记错误。</li>
+              </ol>
+
+              <p>样本总数：64421 (只选择了部分图像，源VGG-Face数据集中有200w+的图像)</p>
+
+              <p>测试集测试结果：</p>
+
+              <div><pre><code class="language-none">   num: 10910
+   AP = 0.9739199566484128
+   mean_elapsed_time: 1.602</code></pre></div></li>
+            <li><p>人脸识别(face_rec)</p>
+
+              <p>模型参考了<a href="http://www.robots.ox.ac.uk/%7Evgg/software/vgg_face/" title="vgg-face-dataset">Deep Face Recognition</a>, 策略是先训练一个输出为2622的CNN分类器(VGG)，在使用阶段，去掉Top-Layer，这样模型的输出即为人脸的编码，再通过计算不同人脸的欧氏距离，即可判断人脸相似度，从而识别人脸。原论文中，还模型输出后，加了triplet loss层，可大幅提升人脸识别准确率。这里并没有加triplet loss层。</p>
+
+              <p>训练数据集：</p>
+
+              <ol>
+                <li>与人脸定位的原图像相同，只是把每张图像的人脸提取出来，按不同人名不同文件夹的方式保存，总共2622个类别。</li>
+                <li>考虑到人脸定位阶段给出的bbox位置可能，有误差，所以这里以annotation中给的bbox的中心位置，进行随机裁剪，进行数据增强。还可以做水平翻转，能提高鲁棒性(不过我的计算资源有限，就没做了。)</li>
+              </ol>
+
+              <p>样本总数：64421 * 2</p>
+
+              <p>不过这里的样本总数明显远远不够，因为总类别数达到了2622. 所以这个模型的训练没有达到好的效果。</p>
+
+              <p>人脸进过编码之后，得到128维向量，通过KNN模型进行分类。</p></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="../static/bootstrap/docs/assets/js/vendor/jquery.min.js"><\/script>')</script>
+    <script src="/static/bootstrap/docs/dist/js/bootstrap.min.js"></script>
+    <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
+    <script src="/static/bootstrap/docs/assets/js/vendor/holder.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="/static/bootstrap/docs/assets/js/ie10-viewport-bug-workaround.js"></script>
+  </body>
+</html>
